@@ -3,14 +3,14 @@
 
   author: Henryk Richter
 
-  last update: Tue May 7 2002 
+  last update: Tue May 7 2002
 
   purpose: just an addon toy for gkrellm
 
   changelog:
   0.5 - port to GKrellm 2.0 (thanks to Bill Nalen)
       - port to Win32 (thanks to Bill Nalen)
-      - kept the code downwards compatible 
+      - kept the code downwards compatible
 
   0.4 - port to GKrellm 1.2.x
 
@@ -27,8 +27,6 @@
 /* see makefile */
 #ifdef GKRELLM2
 #include <gkrellm2/gkrellm.h>
-#else  /* GKRELLM2 */
-#include <gkrellm/gkrellm.h>
 #endif /* GKRELLM2 */
 
 #include <sys/time.h>
@@ -36,7 +34,6 @@
 
 #else /* WIN32 */
 
-#include <src/gkrellm.h>
 #include <src/win32-plugin.h>
 
 #endif /* WIN32 */
@@ -47,7 +44,7 @@
 #include <unistd.h>
 
 #define FLYNN_MAJOR_VERSION 0
-#define FLYNN_MINOR_VERSION 5 
+#define FLYNN_MINOR_VERSION 5
 
 #include "flynn.picture_alpha_big.xpm"
 #define STYLE_NAME "flynn"
@@ -190,7 +187,7 @@ int local_getcpu( void )
                 total = 1.0;
 
         cpu_use = 1.0 - ( (float)  d_idle  / (float) total );
-#if 0 
+#if 0
         printf("   CPU (/proc/stat): %5.2f  ", cpu_use);
         printf(" (jiffies: user:%ld nice:%ld system:%ld idle:%ld total:%ld)\n",
                         d_user, d_nice, d_sys, d_idle, total  );
@@ -228,7 +225,7 @@ static void update_plugin()
 		if( waitpid( -1, NULL, WNOHANG ) > 0 )
 			child_started--;
 	   }
-#endif	  
+#endif
 	   if( dogrin > 0 )
 	   {
 		dogrin--;
@@ -244,10 +241,10 @@ static void update_plugin()
 		{
 			case 0:
 				break;
-			case 1: 
+			case 1:
 				flynn_look++;
 				break;
-			case 2: 
+			case 2:
 				flynn_look--;
 				break;
 			default:
@@ -288,14 +285,14 @@ static gint panel_click_event(GtkWidget *widget, GdkEventExpose *ev)
 	gchar localcmd[256];
 	int i;
 	pid_t pid;
-	
+
 	dogrin = GRIN_TIME;
 
 	/* check for command line */
 	if (strlen(command_line) == 0) return FALSE;
 
 	child_started++;
-	
+
 	/* forkint status */
 	pid = fork();
 	if (pid == 0)
@@ -321,7 +318,7 @@ static gint panel_click_event(GtkWidget *widget, GdkEventExpose *ev)
 		execvp(argv[0],argv);
 		_exit(EXIT_FAILURE);
 	}
-	
+
     return FALSE;
 }
 
@@ -378,7 +375,7 @@ static void create_plugin(GtkWidget *vbox, gint first_create)
 	gkrellm_panel_configure(panel, "", style);
 	gkrellm_panel_create(vbox, monitor, panel);
 #endif
-	
+
 	if (first_create)
 	{
 		gtk_signal_connect(GTK_OBJECT(panel->drawing_area),
@@ -394,11 +391,11 @@ static void create_plugin(GtkWidget *vbox, gint first_create)
 #if GKRELLM_VERSION_MAJOR < 2
 	gkrellm_draw_layers(panel);
 #else
-	gkrellm_draw_panel_layers(panel);	
+	gkrellm_draw_panel_layers(panel);
 #endif
-	
-	
-	
+
+
+
 }
 
 static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
@@ -437,8 +434,8 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 		 {
 		  gchar *label = _("Exclude Nice time from calculations");
         	  gkrellm_gtk_check_button_connected(vbox1, &nice_checkbutton, nice_checkdisable, FALSE, 0,0,
-			 flynn_apply_config, 
-			 NULL, 
+			 flynn_apply_config,
+			 NULL,
 			 label);
 		 }
 #endif
@@ -459,8 +456,8 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 		 {
 		  gchar *label = _("Run in Terminal");
         	  gkrellm_gtk_check_button_connected(vbox2, &term_checkbutton, term_checkdisable, FALSE, 0,0,
-			flynn_apply_config, 
-			NULL, 
+			flynn_apply_config,
+			NULL,
 			label);
 		 }
 #endif
@@ -473,7 +470,7 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 
 
 	}
-	
+
 	/* ABOUT TAB */
         {
             gchar *plugin_about_text;
@@ -543,7 +540,7 @@ gkrellm_init_plugin()
 #endif
 	style_id = gkrellm_add_meter_style(&plugin_mon, STYLE_NAME);
 	monitor = &plugin_mon;
-#endif 
+#endif
 
 	/* set defaults */
 	strcpy( terminal_command_line, "/usr/bin/gnome-terminal -x " );
@@ -552,4 +549,3 @@ gkrellm_init_plugin()
 
 	return &plugin_mon;
 }
-

@@ -1,9 +1,12 @@
+0.9 - Removed gkrellm 1.x from Makefile
+    - Removed gkrellm 1.x from gkrellflynn.c
+
 0.8 - added/fixed handling of exiting processes to avoid
       zombies
     - switched to execvp instead of execv to include
       default search paths for executables automatically
 
-0.7 - added command execution on click option 
+0.7 - added command execution on click option
       ( contributed by James Smith <james_AT_floppy.co.uk> )
     - added input line for preferred terminal
 
@@ -24,4 +27,3 @@
 0.2 - minor cleanups, about box
 
 0.1 - initial version
-
