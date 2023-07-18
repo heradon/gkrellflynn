@@ -3,14 +3,14 @@
 
   author: Henryk Richter
 
-  last update: Tue May 7 2002
+  last update: Tue May 7 2002 
 
   purpose: just an addon toy for gkrellm
 
   changelog:
   0.5 - port to GKrellm 2.0 (thanks to Bill Nalen)
       - port to Win32 (thanks to Bill Nalen)
-      - kept the code downwards compatible
+      - kept the code downwards compatible 
 
   0.4 - port to GKrellm 1.2.x
 
@@ -27,6 +27,8 @@
 /* see makefile */
 #ifdef GKRELLM2
 #include <gkrellm2/gkrellm.h>
+#else  /* GKRELLM2 */
+#include <gkrellm/gkrellm.h>
 #endif /* GKRELLM2 */
 
 #include <sys/time.h>
@@ -34,17 +36,16 @@
 
 #else /* WIN32 */
 
+#include <src/gkrellm.h>
 #include <src/win32-plugin.h>
 
 #endif /* WIN32 */
 
 
 #include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #define FLYNN_MAJOR_VERSION 0
-#define FLYNN_MINOR_VERSION 5
+#define FLYNN_MINOR_VERSION 5 
 
 #include "flynn.picture_alpha_big.xpm"
 #define STYLE_NAME "flynn"
@@ -90,7 +91,6 @@ static gchar command_line[256];
 static GtkWidget *terminal_entry;
 static gchar terminal_command_line[256];
 static int child_started = 0;
-static long holdrand = 1L;
 
 void flynn_apply_config(void)
 {
@@ -128,81 +128,77 @@ static void flynn_load_config (gchar *arg)
 }
 
 /* get current cpu usage */
-int local_getcpu( void )
+int flynn_getcpu( void )
 {
 	float scale_factor = 1;
 #if 0
-        FILE * fin;
-        char buffer[256];
-        char tokens[4] = " \t\n";
+	FILE * fin;
+	char buffer[256];
+	char tokens[4] = " \t\n";
 #endif
 
-        static long last_user = 0;
-        static long last_nice = 0;
-        static long last_sys = 0;
-        static long last_idle = 0;
+	static long last_user = 0;
+	static long last_nice = 0;
+	static long last_sys = 0;
+	static long last_idle = 0;
 
-        long user=0, nice=0, sys=0, idle=0, total=0;
-        long d_user, d_nice, d_sys, d_idle;
-        float cpu_use;
-        float percent;
+	long user=0, nice=0, sys=0, idle=0, total=0;
+	long d_user, d_nice, d_sys, d_idle;
+	float cpu_use;
+	float percent;
 
 	gkrellm_cpu_stats(0, &user, &nice, &sys, &idle);
 
 #if 0
-        if ( (fin = fopen("/proc/stat", "r")) == NULL ) {
-                return(0);
-        }
+	if ( (fin = fopen("/proc/stat", "r")) == NULL ) {
+			return(0);
+	}
 
-        while ( fgets(buffer, 256, fin) ) {
-                if ( strstr(buffer,"cpu") != NULL ) {
-                        strtok(buffer,tokens);
-                        user = atol(strtok(NULL,tokens));
-                        nice = atol(strtok(NULL,tokens));
-                        sys =  atol(strtok(NULL,tokens));
-                        idle = atol(strtok(NULL,tokens));
+	while ( fgets(buffer, 256, fin) ) {
+			if ( strstr(buffer,"cpu") != NULL ) {
+					strtok(buffer,tokens);
+					user = atol(strtok(NULL,tokens));
+					nice = atol(strtok(NULL,tokens));
+					sys =  atol(strtok(NULL,tokens));
+					idle = atol(strtok(NULL,tokens));
 
-			break;
-                }
-        }
+		break;
+			}
+	}
 
-        fclose (fin);
+	fclose (fin);
 #endif
 
-        d_user = user - last_user;
-        d_nice = nice - last_nice;
-        d_sys  = sys  - last_sys;
-        d_idle = idle - last_idle;
+	d_user = user - last_user;
+	d_nice = nice - last_nice;
+	d_sys  = sys  - last_sys;
+	d_idle = idle - last_idle;
 
-        last_user = user;
-        last_nice = nice;
-        last_sys  = sys;
-        last_idle = idle;
+	last_user = user;
+	last_nice = nice;
+	last_sys  = sys;
+	last_idle = idle;
 
-        total = d_user + d_sys + d_nice + d_idle;
+	total = d_user + d_sys + d_nice + d_idle;
 	if( nice_checkdisable == 1 )
 		d_idle += d_nice;
 
-        if ( total < 1 )
-                total = 1.0;
+	if ( total < 1 )
+		total = 1.0;
 
-        cpu_use = 1.0 - ( (float)  d_idle  / (float) total );
-#if 0
-        printf("   CPU (/proc/stat): %5.2f  ", cpu_use);
-        printf(" (jiffies: user:%ld nice:%ld system:%ld idle:%ld total:%ld)\n",
+	cpu_use = 1.0 - ( (float)  d_idle  / (float) total );
+#if 0 
+	printf("   CPU (/proc/stat): %5.2f  ", cpu_use);
+	printf(" (jiffies: user:%ld nice:%ld system:%ld idle:%ld total:%ld)\n",
                         d_user, d_nice, d_sys, d_idle, total  );
 #endif
-        percent = cpu_use / scale_factor;
-        if ( percent > .999999 )
-                percent = .999999;
+	percent = cpu_use / scale_factor;
+	if ( percent > .999999 )
+		percent = .999999;
 
-        return ( (int)(percent*100) );
+	return ( (int)(percent*100) );
 }
 
-int local_rand()
-{
-	return (((holdrand = holdrand * 214013L + 2531011L) >> 16) & 0x7fff);
-}
 
 static void update_plugin()
 {
@@ -225,7 +221,7 @@ static void update_plugin()
 		if( waitpid( -1, NULL, WNOHANG ) > 0 )
 			child_started--;
 	   }
-#endif
+#endif	  
 	   if( dogrin > 0 )
 	   {
 		dogrin--;
@@ -233,18 +229,15 @@ static void update_plugin()
 	   }
 	   else
 	   {
-/*
 		dir = (int)( (float)F_LOOKSTATES * (float)rand() / (RAND_MAX+1.0));
-*/
-		dir = local_rand() % F_LOOKSTATES;
 		switch( dir )
 		{
 			case 0:
 				break;
-			case 1:
+			case 1: 
 				flynn_look++;
 				break;
-			case 2:
+			case 2: 
 				flynn_look--;
 				break;
 			default:
@@ -253,7 +246,7 @@ static void update_plugin()
 		if( flynn_look < 0 ) flynn_look = 0;
 		if( flynn_look >= F_LOOKSTATES ) flynn_look = F_LOOKSTATES-1;
 	   }
-		percent = local_getcpu();
+		percent = flynn_getcpu();
 
 		image_number = flynn_look * F_TORTURES + (F_TORTURES * percent / 100);
 
@@ -285,14 +278,14 @@ static gint panel_click_event(GtkWidget *widget, GdkEventExpose *ev)
 	gchar localcmd[256];
 	int i;
 	pid_t pid;
-
+	
 	dogrin = GRIN_TIME;
 
 	/* check for command line */
 	if (strlen(command_line) == 0) return FALSE;
 
 	child_started++;
-
+	
 	/* forkint status */
 	pid = fork();
 	if (pid == 0)
@@ -318,7 +311,7 @@ static gint panel_click_event(GtkWidget *widget, GdkEventExpose *ev)
 		execvp(argv[0],argv);
 		_exit(EXIT_FAILURE);
 	}
-
+	
     return FALSE;
 }
 
@@ -375,7 +368,7 @@ static void create_plugin(GtkWidget *vbox, gint first_create)
 	gkrellm_panel_configure(panel, "", style);
 	gkrellm_panel_create(vbox, monitor, panel);
 #endif
-
+	
 	if (first_create)
 	{
 		gtk_signal_connect(GTK_OBJECT(panel->drawing_area),
@@ -391,11 +384,11 @@ static void create_plugin(GtkWidget *vbox, gint first_create)
 #if GKRELLM_VERSION_MAJOR < 2
 	gkrellm_draw_layers(panel);
 #else
-	gkrellm_draw_panel_layers(panel);
+	gkrellm_draw_panel_layers(panel);	
 #endif
-
-
-
+	
+	
+	
 }
 
 static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
@@ -434,8 +427,8 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 		 {
 		  gchar *label = _("Exclude Nice time from calculations");
         	  gkrellm_gtk_check_button_connected(vbox1, &nice_checkbutton, nice_checkdisable, FALSE, 0,0,
-			 flynn_apply_config,
-			 NULL,
+			 flynn_apply_config, 
+			 NULL, 
 			 label);
 		 }
 #endif
@@ -456,8 +449,8 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 		 {
 		  gchar *label = _("Run in Terminal");
         	  gkrellm_gtk_check_button_connected(vbox2, &term_checkbutton, term_checkdisable, FALSE, 0,0,
-			flynn_apply_config,
-			NULL,
+			flynn_apply_config, 
+			NULL, 
 			label);
 		 }
 #endif
@@ -470,7 +463,7 @@ static void flynn_create_plugin_tab(GtkWidget *tab_vbox)
 
 
 	}
-
+	
 	/* ABOUT TAB */
         {
             gchar *plugin_about_text;
@@ -540,12 +533,11 @@ gkrellm_init_plugin()
 #endif
 	style_id = gkrellm_add_meter_style(&plugin_mon, STYLE_NAME);
 	monitor = &plugin_mon;
-#endif
+#endif 
 
 	/* set defaults */
 	strcpy( terminal_command_line, "/usr/bin/gnome-terminal -x " );
 
-	holdrand = getpid();
-
 	return &plugin_mon;
 }
+
